@@ -6,28 +6,28 @@
 # GCTA-1.94.1 
 
 #### Set folders
-mkdir -p ${HomePath}/METALresults
-mkdir -p ${HomePath}/METALresults/logs
-mkdir -p ${HomePath}/METALresults/SampleScheme
-mkdir -p ${HomePath}/METALresults/StandErrScheme
-mkdir -p ${HomePath}/METALresults/MergedMeta
+mkdir -p ${METAresPath}
+mkdir -p ${METAresPath}/logs
+mkdir -p ${METAresPath}/SampleScheme
+mkdir -p ${METAresPath}/StandErrScheme
+mkdir -p ${METAresPath}/MergedMeta
 
-mkdir -p ${HomePath}/METALresults/FilteredMeta
-mkdir -p ${HomePath}/METALresults/FilteredMeta/plots
+mkdir -p ${METAresPath}/FilteredMeta
+mkdir -p ${METAresPath}/FilteredMeta/plots
 
-mkdir -p ${HomePath}/COJOresults
-mkdir -p ${HomePath}/COJOresults/logs
-mkdir -p ${HomePath}/COJOresults/Cojo_${phenotype}
+mkdir -p ${COJOresPath}
+mkdir -p ${COJOresPath}/logs
+mkdir -p ${COJOresPath}/Cojo_${phenotype}
 
-mkdir -p ${HomePath}/Mstatresults/
-mkdir -p ${HomePath}/Mstatresults/logs
-mkdir -p ${HomePath}/Mstatresults/plots
-mkdir -p ${HomePath}/Mstatresults/Mstat_${phenotype}
+mkdir -p ${MstatresPath}
+mkdir -p ${MstatresPath}/logs
+mkdir -p ${MstatresPath}/plots
+mkdir -p ${MstatresPath}/Mstat_${phenotype}
 
-mkdir -p ${HomePath}/METAregresults/
-mkdir -p ${HomePath}/METAregresults/logs
-mkdir -p ${HomePath}/METAregresults/plots
-mkdir -p ${HomePath}/METAregresults/METAreg_${phenotype}
+mkdir -p ${METAregrePath}
+mkdir -p ${METAregrePath}/logs
+mkdir -p ${METAregrePath}/plots
+mkdir -p ${METAregrePath}/METAreg_${phenotype}
 
 #### Download Reference files if needed
 # 2024 version of dbSNP
