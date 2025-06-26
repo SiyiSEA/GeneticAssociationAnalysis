@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#### Tools
+#### Tools needed
 # bcftools https://www.htslib.org/download/
 # R
 # GCTA-1.94.1 
@@ -11,21 +11,25 @@ mkdir -p ${HomePath}/METALresults/logs
 mkdir -p ${HomePath}/METALresults/SampleScheme
 mkdir -p ${HomePath}/METALresults/StandErrScheme
 mkdir -p ${HomePath}/METALresults/MergedMeta
+
 mkdir -p ${HomePath}/METALresults/FilteredMeta
 mkdir -p ${HomePath}/METALresults/FilteredMeta/plots
 
 mkdir -p ${HomePath}/COJOresults
 mkdir -p ${HomePath}/COJOresults/logs
+mkdir -p ${HomePath}/COJOresults/Cojo_${phenotype}
 
 mkdir -p ${HomePath}/Mstatresults/
 mkdir -p ${HomePath}/Mstatresults/logs
 mkdir -p ${HomePath}/Mstatresults/plots
+mkdir -p ${HomePath}/Mstatresults/Mstat_${phenotype}
 
 mkdir -p ${HomePath}/METAregresults/
 mkdir -p ${HomePath}/METAregresults/logs
 mkdir -p ${HomePath}/METAregresults/plots
+mkdir -p ${HomePath}/METAregresults/METAreg_${phenotype}
 
-#### Download Reference files
+#### Download Reference files if needed
 # 2024 version of dbSNP
 # if [ -f ${HomePath}/Resources/GRCh37_latest_dbSNP_all.vcf.gz ]; then
 #     echo "GRCh37_latest_dbSNP_all.vcf.gz already exists."
@@ -44,3 +48,26 @@ mkdir -p ${HomePath}/METAregresults/plots
     
 #     # to do 
 # fi
+
+#### Resources files
+if [ -f ${HomePath}/Resources/1000Geur/1000G_hg19_eur.bim ]; then
+    echo "1000G eur reference files are exist."
+else
+    echo "1000G eur reference files does not exist. Please check the file path."
+    exit 1
+fi
+
+if [ -f ${HomePath}/Resources/cohort_lambda.tsv ]; then
+    echo "Cohort lambda file exists."
+    cohortLambda=${HomePath}/Resources/cohort_lambda.tsv
+else
+    echo "Cohort lambda file does not exist. Please check the file path."
+    exit 1
+fi
+
+if [ -f ${HomePath}/Resources/cohort_age.tsv ]; then
+    echo "Cohort age file exists."
+else
+    echo "Cohort age file does not exist. Please check the file path."
+    exit 1
+fi
