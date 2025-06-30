@@ -58,11 +58,11 @@ fi
 HomePath="/lustre/home/sww208/GoDMC/GeneticAssociationAnalysis"
 echo "HomePath is set to ${HomePath}"
 echo "Please setting the HomePath variable in the config file if it is not correct."
+ScriptsPath="/lustre/home/sww208/GoDMC/GeneticAssociationAnalysis"
+RscriptsPath="${ScriptsPath}/Rscripts"
+
 MetalPath="${HomePath}/METALscripts"
 METAresPath="${HomePath}/METALresults"
-RscriptsPath="${HomePath}/Rscripts"
 COJOresPath="${HomePath}/COJOresults"
 MstatresPath="${HomePath}/Mstatresults"
 METAregrePath="${HomePath}/METAregresults"
-
-sh "${HomePath}/00-SetFolders.sh"

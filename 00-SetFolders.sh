@@ -1,33 +1,37 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #### Tools needed
 # bcftools https://www.htslib.org/download/
 # R
 # GCTA-1.94.1 
 
+source $1
 #### Set folders
-mkdir -p ${METAresPath}
-mkdir -p ${METAresPath}/logs
-mkdir -p ${METAresPath}/SampleScheme
-mkdir -p ${METAresPath}/StandErrScheme
-mkdir -p ${METAresPath}/MergedMeta
+mkdir -p "${METAresPath}"
+mkdir -p "${METAresPath}/logs"
+mkdir -p "${METAresPath}/SampleScheme"
+mkdir -p "${METAresPath}/StandErrScheme"
+mkdir -p "${METAresPath}/MergedMeta"
 
-mkdir -p ${METAresPath}/FilteredMeta
-mkdir -p ${METAresPath}/FilteredMeta/plots
+mkdir -p "${METAresPath}/FilteredMeta"
+mkdir -p "${METAresPath}/FilteredMeta/plots"
 
-mkdir -p ${COJOresPath}
-mkdir -p ${COJOresPath}/logs
-mkdir -p ${COJOresPath}/Cojo_${phenotype}
+mkdir -p "${COJOresPath}"
+mkdir -p "${COJOresPath}/logs"
 
-mkdir -p ${MstatresPath}
-mkdir -p ${MstatresPath}/logs
-mkdir -p ${MstatresPath}/plots
-mkdir -p ${MstatresPath}/Mstat_${phenotype}
+mkdir -p "${MstatresPath}"
+mkdir -p "${MstatresPath}/logs"
+mkdir -p "${MstatresPath}/plots"
 
-mkdir -p ${METAregrePath}
-mkdir -p ${METAregrePath}/logs
-mkdir -p ${METAregrePath}/plots
-mkdir -p ${METAregrePath}/METAreg_${phenotype}
+mkdir -p "${METAregrePath}"
+mkdir -p "${METAregrePath}/logs"
+mkdir -p "${METAregrePath}/plots"
+
+for phenotype in DNAmAgeSD DNAmAgessSD PhenoAgeSD PhenoAgessSD DunedinPACESD DunedinPACEssSD gwas_smoking; do
+    mkdir -p "${COJOresPath}/Cojo_${phenotype}"
+    mkdir -p "${MstatresPath}/Mstat_${phenotype}"
+    mkdir -p "${METAregrePath}/METAreg_${phenotype}"
+done
 
 #### Download Reference files if needed
 # 2024 version of dbSNP
@@ -50,22 +54,22 @@ mkdir -p ${METAregrePath}/METAreg_${phenotype}
 # fi
 
 #### Resources files
-if [ -f ${HomePath}/Resources/1000Geur/1000G_hg19_eur.bim ]; then
+if [ -f ${ScriptsPath}/Resources/1000Geur/1000G_hg19_eur.bim ]; then
     echo "1000G eur reference files are exist."
 else
     echo "1000G eur reference files does not exist. Please check the file path."
     exit 1
 fi
 
-if [ -f ${HomePath}/Resources/cohort_lambda.tsv ]; then
+if [ -f ${ScriptsPath}/Resources/cohort_lambda.tsv ]; then
     echo "Cohort lambda file exists."
-    cohortLambda=${HomePath}/Resources/cohort_lambda.tsv
+    cohortLambda=${ScriptsPath}/Resources/cohort_lambda.tsv
 else
     echo "Cohort lambda file does not exist. Please check the file path."
     exit 1
 fi
 
-if [ -f ${HomePath}/Resources/cohort_age.tsv ]; then
+if [ -f ${ScriptsPath}/Resources/cohort_age.tsv ]; then
     echo "Cohort age file exists."
 else
     echo "Cohort age file does not exist. Please check the file path."

@@ -10,7 +10,7 @@
 #SBATCH --mem=40G
 #SBATCH --ntasks=16
 #SBATCH --time=0-20:00:00
-#SBATCH --array=7
+#SBATCH --array=1-6
 
 #####################################################################################################################
 # This script is for mate-analysis on all the GWAS results collected from the GoDMC II.
@@ -20,10 +20,10 @@
 
 module purge
 module load R/4.2.1-foss-2022a
-source ./config "${SLURM_ARRAY_TASK_ID}"
+source $1 "${SLURM_ARRAY_TASK_ID}"
 cd ${HomePath} || exit
 timetemp=$(date -u +%Y-%m-%d_%H-%M)
-exec &> >(tee ./METALresults/logs/01META-log${timetemp}_${phenotype}.log)
+exec &> >(tee ${METAresPath}/logs/01META-log${timetemp}_${phenotype}.log)
 
 #### check the DNAmAgeSD.txt file
 if [ ! -f ${MetalPath}/DNAmAgeSD_SAMPLE.txt ]; then
@@ -67,6 +67,9 @@ if [ ${phenotype} == "gwas_smoking" ]; then
 
     sed "s/10/11/g" ${MetalPath}/DNAmAgeSD_STERR.txt > ${MetalPath}/smoking_STERR.temp
     sed "s/DNAmAgeSD/gwas_smoking/g" ${MetalPath}/smoking_STERR.temp > ${MetalPath}/gwas_smoking_STERR.txt
+
+    rm ${MetalPath}/smoking_SAMPLE.temp
+    rm ${MetalPath}/smoking_STERR.temp
 fi
 
 #### Execute meta-analysis for .fastGWA based on sample size scheme and standard error scheme
@@ -76,13 +79,10 @@ metal ${MetalPath}/${phenotype}_STERR.txt
 #### Check the cohorts in the meta-analysis results
 echo "==========================Information of ${phenotype}====================="
 echo "The Top SNPs for ${phenotype} are:"
-grep "Smallest p-value" ${HomePath}/METALresults/logs/01META-log${timetemp}_${phenotype}.log
+grep "Smallest p-value" ${METAresPath}/logs/01META-log${timetemp}_${phenotype}.log
 
-grep 'StatsAgeSmoke' ${HomePath}/METALresults/SampleScheme/${phenotype}_SS1.tbl.info | awk -F'/' '{ print $2 }' > ${METAresPath}/SampleScheme/${phenotype}_cohorts.txt
-grep 'StatsAgeSmoke' ${HomePath}/METALresults/StandErrScheme/${phenotype}_SE1.tbl.info | awk -F'/' '{ print $2 }' > ${METAresPath}/StandErrScheme/${phenotype}_cohorts.txt
-
-nSS=$(wc -l < ${METAresPath}/SampleScheme/${phenotype}_cohorts.txt)
-nSE=$(wc -l < ${METAresPath}/StandErrScheme/${phenotype}_cohorts.txt)
+nSS=$(grep "Input File" ${METAresPath}/SampleScheme/${phenotype}_SS1.tbl.info | wc -l)
+nSE=$(grep "Input File" ${METAresPath}/StandErrScheme/${phenotype}_SE1.tbl.info | wc -l)
 
 echo "Number of cohorts in Sample Size Scheme: ${nSS}"
 echo "Number of cohorts in Standard Error Scheme: ${nSE}"
