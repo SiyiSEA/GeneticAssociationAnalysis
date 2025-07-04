@@ -5,7 +5,7 @@
 #SBATCH --mail-type=END # send email at job completion
 #SBATCH --output=JobReports/02QCMETA-matched-%a.out
 #SBATCH --error=JobReports/02QCMETA-matched-%a.err
-#SBATCH --job-name=02QCMETAmatched
+#SBATCH --job-name=02QCMETA
 #SBATCH --nodes=1
 #SBATCH --mem=40G
 #SBATCH --ntasks=16
@@ -21,7 +21,7 @@
 
 module purge
 module load R/4.2.1-foss-2022a
-source ./config_matched "${SLURM_ARRAY_TASK_ID}"
+source $1 "${SLURM_ARRAY_TASK_ID}"
 timetemp=$(date -u +%Y-%m-%d_%H-%M)
 exec &> >(tee ${METAresPath}/logs/02QCMETA-log${timetemp}_${phenotype}.log)
 
@@ -128,6 +128,7 @@ if [ ${SLURM_ARRAY_TASK_ID} == 8 ]; then
 fi
 
 #### Check the Number of SNPs in the filtered results
+echo " "
 if [ ${SLURM_ARRAY_TASK_ID} -lt 8 ]; then
     echo "==========================Information of ${phenotype}======================"
     echo "The total number of the SNPs in the raw SS meta-analysis of ${phenotype} is "
@@ -141,4 +142,6 @@ if [ ${SLURM_ARRAY_TASK_ID} -lt 8 ]; then
     echo "The total number of the SNPs in to plot for ${phenotype} is "
     wc -l ${METAresPath}/FilteredMeta/${phenotype}.LocusZoom
     echo "============================================================================"
+    
+    echo "Successfully completed the QCMETA for ${phenotype}."
 fi
