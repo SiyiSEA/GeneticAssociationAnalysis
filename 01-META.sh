@@ -77,6 +77,7 @@ metal ${MetalPath}/${phenotype}_SAMPLE.txt
 metal ${MetalPath}/${phenotype}_STERR.txt
 
 #### Check the cohorts in the meta-analysis results
+echo " "
 echo "==========================Information of ${phenotype}====================="
 echo "The Top SNPs for ${phenotype} are:"
 grep "Smallest p-value" ${METAresPath}/logs/01META-log${timetemp}_${phenotype}.log
