@@ -30,6 +30,7 @@ mkdir -p "${METAregrePath}/plots"
 for phenotype in DNAmAgeSD DNAmAgessSD PhenoAgeSD PhenoAgessSD DunedinPACESD DunedinPACEssSD gwas_smoking; do
     mkdir -p "${COJOresPath}/Cojo_${phenotype}"
     mkdir -p "${MstatresPath}/Mstat_${phenotype}"
+    mkdir -p "${MstatresPath}/Mstat_${phenotype}/plots"
     mkdir -p "${METAregrePath}/METAreg_${phenotype}"
 done
 
@@ -61,17 +62,23 @@ else
     exit 1
 fi
 
-if [ -f ${ScriptsPath}/Resources/cohort_lambda.tsv ]; then
+if [ -f ${HomePath}/Resources/cohort_lambda.tsv ]; then
     echo "Cohort lambda file exists."
-    cohortLambda=${ScriptsPath}/Resources/cohort_lambda.tsv
 else
     echo "Cohort lambda file does not exist. Please check the file path."
     exit 1
 fi
 
-if [ -f ${ScriptsPath}/Resources/cohort_age.tsv ]; then
+if [ -f ${HomePath}/Resources/cohort_age.tsv ]; then
     echo "Cohort age file exists."
 else
     echo "Cohort age file does not exist. Please check the file path."
+    exit 1
+fi
+
+if [ -f ${HomePath}/Resources/rsid.txt ]; then
+    echo "rsid.txt file exists."
+else
+    echo "rsid.txt file does not exist. Please check the file path."
     exit 1
 fi
