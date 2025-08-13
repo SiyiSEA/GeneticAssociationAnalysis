@@ -10,7 +10,7 @@
 #SBATCH --mem=40G
 #SBATCH --ntasks=16
 #SBATCH --time=0-20:00:00
-#SBATCH --array=8
+#SBATCH --array=1-7
 
 ####################################################################################################################
 # This script is for quality control of meta-analysis results on all the GWAS results collected from the GoDMC II.
@@ -92,8 +92,8 @@ Filter_forN() {
 if [ ${SLURM_ARRAY_TASK_ID} -lt 8 ]; then
 
     #### Merge and filter for smoking
-    Merge_SSSE_META ${phenotype}
-    Filter_forN ${phenotype}
+    # Merge_SSSE_META ${phenotype}
+    # Filter_forN ${phenotype}
 
     #### Filter the merged table based on the freSE, HetQ, HetI and HetP values
     echo "Filtering ${phenotype}_merged.tbl.filteredN file for freSE, HetQ, HetI and HetP values..."
@@ -104,9 +104,10 @@ if [ ${SLURM_ARRAY_TASK_ID} -lt 8 ]; then
 
     # Output files in the ${METAresPath}/FilteredMeta:
     # 1. _sigSNPlist.txt: list of significant SNPs with P < 1e-5;
-    # 2. _input.cojo: input file for COJO analysis; ["MarkerName", "Allele1", "Allele2","Freq1","Effect","StdErr","P-value","N","Weight","P-value_SE"]
-    # 3. .LocusZoom: LocusZoom file for visualization; ["Chr","BP","MarkerName", "Allele1", "Allele2","Freq1","Effect","StdErr","P-value","N","Weight","P-value_SE"]
+    # 2. _input.cojo: input file for COJO analysis; ["MarkerName", "Allele1", "Allele2","Freq1","Effect","StdErr","P-value","N","Weight","Zscore","P-value_SE"]
+    # 3. .LocusZoom: LocusZoom file for visualization; ["Chr","BP","MarkerName", "Allele1", "Allele2","Freq1","Effect","StdErr","P-value","N","Weight","Zscore","P-value_SE"]
     # 4. plots of I^2 before and after filtering;
+	# 5. .LDSCinput: LDSC for heritabitliy estimation;["Chr","BP","MarkerName", "Allele1", "Allele2","Freq1","Freq_SE","MinFreq","MaxFreq","N","Weight","Zscore","P-value", "Direction"]
 
     echo "Don't forget to upload the *.LocusZoom file into LocusZoom server for visualization."
     echo "Successfully completed the QC for ${phenotype}."
