@@ -66,3 +66,9 @@ METAresPath="${HomePath}/METALresults"
 COJOresPath="${HomePath}/COJOresults"
 MstatresPath="${HomePath}/Mstatresults"
 METAregrePath="${HomePath}/METAregresults"
+LDSCresPath="${HomePath}/LDSCresults"
+GENECORresPath="${HomePath}/GENECORresults"
+
+
+#### tools
+LDSC="/lustre/home/sww208/Software/ldsc"

@@ -33,6 +33,8 @@ mkdir -p "${LDSCresPath}"
 mkdir -p "${LDSCresPath}/logs"
 mkdir -p "${LDSCresPath}/plots"
 
+mkdir -p "${GENECORresPath}"
+mkdir -p "${GENECORresPath}/logs"
 
 
 for phenotype in DNAmAgeSD DNAmAgessSD PhenoAgeSD PhenoAgessSD DunedinPACESD DunedinPACEssSD gwas_smoking; do
@@ -41,6 +43,7 @@ for phenotype in DNAmAgeSD DNAmAgessSD PhenoAgeSD PhenoAgessSD DunedinPACESD Dun
     mkdir -p "${MstatresPath}/Mstat_${phenotype}/plots"
     mkdir -p "${METAregrePath}/METAreg_${phenotype}"
     mkdir -p "${LDSCresPath}/LDSC_${phenotype}"
+    mkdir -p "${GENECORresPath}/GENECOR_${phenotype}"
 done
 
 #### Download Reference files if needed
