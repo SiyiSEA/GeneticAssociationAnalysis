@@ -62,13 +62,6 @@ lambda <- arguments[4]
 phenotype <- arguments[5]
 SigSNPs <- arguments[6:length(arguments)]
 
-setpath="/lustre/home/sww208/GoDMC/GADatasets/CorrectGWAS10/Mstatresults/Mstat_DNAmAgeSD"
-Mstat="SignalSNPs.pre"
-effectsize="effectsize_MstatSignal.pre"
-lambda="/lustre/home/sww208/GoDMC/GADatasets/CorrectGWAS10/Resources/cohort_lambda.tsv"
-phenotype="DNAmAgeSD"
-SigSNPs="6:18141639_C_T 6:18104276_A_C 1:236518226_C_T"
-
 setwd(setpath)
 message("Reading in the files for Mstat")
 Mresults = fread(Mstat, header = T, data.table=F, stringsAsFactors=F)
