@@ -30,7 +30,7 @@ cd  "${COJOresPath}"/Cojo_"${phenotype}" || exit
 gcta-1.94.1 --bfile ${ScriptsPath}/Resources/1000Geur/1000G_hg19_eur \
             --cojo-file ${METAresPath}/FilteredMeta/"${phenotype}"_input.cojo \
             --cojo-slct \
-            --cojo-p 0.00001 \
+            --cojo-p 5e-8 \
             --out "${phenotype}"
 
 # output files descriptions

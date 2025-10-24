@@ -10,7 +10,7 @@
 #SBATCH --mem=40G
 #SBATCH --ntasks=16
 #SBATCH --time=0-20:00:00
-#SBATCH --array=1-7
+#SBATCH --array=8
 
 ####################################################################################################################
 # This script is for quality control of meta-analysis results on all the GWAS results collected from the GoDMC II.
@@ -81,7 +81,7 @@ Filter_forN() {
     # read -p 'Mean is ' mean
     
     # Filter the merged table based on the mean value
-    awk -F' ' -v m=3000 'NR==1 || $10 >= m' ./MergedMeta/${mergedTBL} > ./MergedMeta/${mergedTBL}.filteredN.temp
+    awk -F' ' -v m=21000 'NR==1 || $10 >= m' ./MergedMeta/${mergedTBL} > ./MergedMeta/${mergedTBL}.filteredN.temp
     awk -F' ' '{print $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20}' ./MergedMeta/${mergedTBL}.filteredN.temp > ./MergedMeta/${mergedTBL}.filteredN
     rm ./MergedMeta/${mergedTBL}.filteredN.temp
 
@@ -91,9 +91,9 @@ Filter_forN() {
 
 if [ ${SLURM_ARRAY_TASK_ID} -lt 8 ]; then
 
-    #### Merge and filter for smoking
-    # Merge_SSSE_META ${phenotype}
-    # Filter_forN ${phenotype}
+    #### Merge and filter meta-analysis
+    Merge_SSSE_META ${phenotype}
+    Filter_forN ${phenotype}
 
     #### Filter the merged table based on the freSE, HetQ, HetI and HetP values
     echo "Filtering ${phenotype}_merged.tbl.filteredN file for freSE, HetQ, HetI and HetP values..."
@@ -117,7 +117,7 @@ fi
 
 #### Manhattan plot and QQ plot
 if [ ${SLURM_ARRAY_TASK_ID} == 8 ]; then
-    for phenotype in "DNAmAge" "PhenoAge" "DunedinPACE" # "gwas_smoking"
+    for phenotype in "DNAmAge" "PhenoAge" "DunedinPACE" "gwas_smoking"
     do
         echo "Generating plots for ${phenotype}..."
         Rscript ${RscriptsPath}/plot_meta.R \
@@ -134,7 +134,7 @@ if [ ${SLURM_ARRAY_TASK_ID} -lt 8 ]; then
     echo "==========================Information of ${phenotype}======================"
     echo "The total number of the SNPs in the raw SS meta-analysis of ${phenotype} is "
     wc -l ${HomePath}/METALresults/SampleScheme/${phenotype}_SS1.tbl
-    echo "How many bad SNPs doesn't match to the 1000G eur reference file? "
+    echo "The total number of the SNPs in the raw SE meta-analysis of ${phenotype} is "
     wc -l ${HomePath}/METALresults/StandErrScheme/${phenotype}_SE1.tbl
     echo "The total number of the SNPs in the merged meta-analysis of ${phenotype} is "
     wc -l ${METAresPath}/MergedMeta/${phenotype}_merged.tbl

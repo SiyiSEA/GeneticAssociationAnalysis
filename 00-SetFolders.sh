@@ -18,8 +18,12 @@ mkdir -p "${METAresPath}/MergedMeta"
 mkdir -p "${METAresPath}/FilteredMeta"
 mkdir -p "${METAresPath}/FilteredMeta/plots"
 
+mkdir -p "${MetalPath}"
+cp ${ScriptsPath}/METALscripts/* ${MetalPath}
+
 mkdir -p "${COJOresPath}"
 mkdir -p "${COJOresPath}/logs"
+mkdir -p "${COJOresPath}/plots"
 
 mkdir -p "${MstatresPath}"
 mkdir -p "${MstatresPath}/logs"
@@ -39,6 +43,8 @@ mkdir -p "${GENECORresPath}/logs"
 
 for phenotype in DNAmAgeSD DNAmAgessSD PhenoAgeSD PhenoAgessSD DunedinPACESD DunedinPACEssSD gwas_smoking; do
     mkdir -p "${COJOresPath}/Cojo_${phenotype}"
+    mkdir -p "${COJOresPath}/Cojo_${phenotype}/03aLocusZoom"
+    mkdir -p "${COJOresPath}/Cojo_${phenotype}/03bForest"
     mkdir -p "${MstatresPath}/Mstat_${phenotype}"
     mkdir -p "${MstatresPath}/Mstat_${phenotype}/plots"
     mkdir -p "${METAregrePath}/METAreg_${phenotype}"
@@ -72,14 +78,14 @@ if [ -f ${ScriptsPath}/Resources/1000Geur/1000G_hg19_eur.bim ]; then
     echo "1000G eur reference files are exist."
 else
     echo "1000G eur reference files does not exist. Please check the file path."
-    exit 1
+    #exit 1
 fi
 
-if [ -f ${HomePath}/Resources/cohort_lambda.tsv ]; then
+if [ -f ${HomePath}/Resources/FastGWA_lambda.txt ]; then
     echo "Cohort lambda file exists."
 else
     echo "Cohort lambda file does not exist. Please check the file path."
-    exit 1
+    #exit 1
 fi
 
 #if [ -f ${HomePath}/Resources/cohort_age.tsv ]; then
@@ -93,7 +99,7 @@ if [ -f ${HomePath}/Resources/rsid.txt ]; then
     echo "rsid.txt file exists."
 else
     echo "rsid.txt file does not exist. Please check the file path."
-    exit 1
+    #exit 1
 fi
 
 if [ -f ${HomePath}/Resources/w_hm3.snplist ]; then
@@ -116,36 +122,36 @@ fi
 
 
 
-if [ -f ${HomePath}/Resources/common_all_ref_hg37.BED.uni.final ]; then
-    echo "filtered_w_hm3.BED file exists"
-else
-    # Download the hg37 vcf file from NCBI
+# if [ -f ${HomePath}/Resources/common_all_ref3hg37.BED.uni.final ]; then
+#     echo "filtered_w_hm3.BED file exists"
+# else
+#     # Download the hg37 vcf file from NCBI
 
-    cd ${HomePath}/Resources/ || exit
-    wget https://ftp.ncbi.nih.gov/snp/organisms/human_9606_b151_GRCh37p13/VCF/common_all_20180423.vcf.gz
-    gunzip common_all_20180423.vcf.gz
-    vcf2bed --max-mem=50G < common_all_20180423.vcf > common_all_hg37.BED
-    awk '{print $1, $2, $3, $4}' common_all_hg37.BED > common_all_ref_hg37.BED.temp
-    awk '!/Y/' common_all_ref_hg37.BED.temp > common_all_ref_hg37.BED.temp2
-    sed -e '1i Chr Start End SNP' common_all_ref_hg37.BED.temp2 > common_all_ref_hg37.BED.temp3
+#     cd ${HomePath}/Resources/ || exit
+#     wget https://ftp.ncbi.nih.gov/snp/organisms/human_9606_b151_GRCh37p13/VCF/common_all_20180423.vcf.gz
+#     gunzip common_all_20180423.vcf.gz
+#     vcf2bed --max-mem=50G < common_all_20180423.vcf > common_all_hg37.BED
+#     awk '{print $1, $2, $3, $4}' common_all_hg37.BED > common_all_ref_hg37.BED.temp
+#     awk '!/Y/' common_all_ref_hg37.BED.temp > common_all_ref_hg37.BED.temp2
+#     sed -e '1i Chr Start End SNP' common_all_ref_hg37.BED.temp2 > common_all_ref_hg37.BED.temp3
 
-    # only care about the chr:bp format
-    echo "Extracting SNPs from w_hm3.snplist and common_all_ref_hg37.BED.temp3"
-    awk 'NR==FNR {snp_map[$1]; next} 
-     FNR==1 || $4 in snp_map' w_hm3.snplist common_all_ref_hg37.BED.temp3 > common_all_ref_hg37.BED.dup.temp4 # 1460900
+#     # only care about the chr:bp format
+#     echo "Extracting SNPs from w_hm3.snplist and common_all_ref_hg37.BED.temp3"
+#     awk 'NR==FNR {snp_map[$1]; next} 
+#      FNR==1 || $4 in snp_map' w_hm3.snplist common_all_ref_hg37.BED.temp3 > common_all_ref_hg37.BED.dup.temp4 # 1460900
     
-    echo "Number of SNPs in the common_all_ref_hg37.BED.dup.temp4: "
-    wc -l common_all_ref_hg37.BED.dup.temp4 # 1460900
+#     echo "Number of SNPs in the common_all_ref_hg37.BED.dup.temp4: "
+#     wc -l common_all_ref_hg37.BED.dup.temp4 # 1460900
 
-    echo "Number of duplicated SNPs in common_all_ref_hg37.BED.dup.temp4: "
-    awk '{print $4}' common_all_ref_hg37.BED.dup.temp4 | uniq -d | wc -l # 229024
+#     echo "Number of duplicated SNPs in common_all_ref_hg37.BED.dup.temp4: "
+#     awk '{print $4}' common_all_ref_hg37.BED.dup.temp4 | uniq -d | wc -l # 229024
 
-    echo "Extracting unique SNPs from common_all_ref_hg37.BED.dup.temp4"
-    head -n 1 common_all_ref_hg37.BED.dup.temp4 > common_all_ref_hg37.BED.uni.final
-    tail -n +2 common_all_ref_hg37.BED.dup.temp4 | sort -k1,1n -k2,2n | uniq >> common_all_ref_hg37.BED.uni.final #1213746
-    echo "Number of SNPs in the common_all_ref_hg37.BED.uni.final: "
-    wc -l common_all_ref_hg37.BED.uni.final # 1213746
-    echo "Successfully created common_all_ref_hg37.BED.uni.final file."
-    mv common_all_ref_hg37.BED.temp3 common_all_ref_hg37.BED
-    rm common_all_ref_hg37.BED.temp* common_all_ref_hg37.BED.dup.temp4
-fi
+#     echo "Extracting unique SNPs from common_all_ref_hg37.BED.dup.temp4"
+#     head -n 1 common_all_ref_hg37.BED.dup.temp4 > common_all_ref_hg37.BED.uni.final
+#     tail -n +2 common_all_ref_hg37.BED.dup.temp4 | sort -k1,1n -k2,2n | uniq >> common_all_ref_hg37.BED.uni.final #1213746
+#     echo "Number of SNPs in the common_all_ref_hg37.BED.uni.final: "
+#     wc -l common_all_ref_hg37.BED.uni.final # 1213746
+#     echo "Successfully created common_all_ref_hg37.BED.uni.final file."
+#     mv common_all_ref_hg37.BED.temp3 common_all_ref_hg37.BED
+#     rm common_all_ref_hg37.BED.temp* common_all_ref_hg37.BED.dup.temp4
+# fi
