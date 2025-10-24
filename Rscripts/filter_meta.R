@@ -93,9 +93,10 @@ FreqSE_SE = dim(METAresult[METAresult$FreqSE_SE > 0.3,])[1]
 # }
 
 # HetIsq can detact the heterogeneity better than QC, so I will use HetIsq to filter out the SNPs
-message("How many SNPs with HetIsq > 75 and with HetPval < 0.05?")
-dim(METAresult[which(METAresult$HetISq > 75 & METAresult$HetPVal < 0.05),])[1]
-# METAresult_filter <- METAresult[METAresult$HetISq < 75 & METAresult$HetPVal > 0.05,]
+message("How many SNPs with HetIsq > 80 and with HetPval < 0.05?")
+dim(METAresult[which(METAresult$HetISq > 80 & METAresult$HetPVal < 0.05),])[1]
+message("Filter out SNPs with HetIsq > 80 and with HetPval < 0.05")
+METAresult <- METAresult[METAresult$HetISq < 80 & METAresult$HetPVal > 0.05,]
 
 # Visluazaion
 # Visluazaion(METAresult, phenotype)
@@ -105,12 +106,12 @@ dim(METAresult[which(METAresult$HetISq > 75 & METAresult$HetPVal < 0.05),])[1]
 
 # Make a list of SNPs with p-value < 1e-5
 message("Saving the SNPs with p-value < 1e-5")
-SNPlist <- METAresult[METAresult$`P-value` < 1e-5,]
+SNPlist <- METAresult[METAresult$`P-value` < 5e-8,]
 write.table(SNPlist, file = paste0(phenotype , "_sigSNPlist.txt"), sep = "\t", col.names = T, row.names = F, quote = F)
 
 # Formatted the filter results for upload into COJO
 message("Saving the SNPs for COJO")
-METACOJO <- METAresult[,c("MarkerName", "Allele1", "Allele2","Freq1","Effect","StdErr","P-value","N","Weight","P-value_SE")]
+METACOJO <- METAresult[,c("MarkerName", "Allele1", "Allele2","Freq1","Effect","StdErr","P-value_SE","N","Weight","Zscore","P-value")]
 fwrite(METACOJO, file = paste0(phenotype,"_input.cojo"), quote = F, sep = "\t", col.names = T, row.name = F )
 
 # Formatted the filter results for upload into locuszoom
@@ -118,9 +119,22 @@ METACOJO[c('Chr', 'BP_ALT_REF')] <- str_split_fixed(METACOJO$MarkerName, ':', 2)
 METACOJO[c('BP', 'ALT_REF')] <- str_split_fixed(METACOJO$BP_ALT_REF, '_', 2)
 METACOJO[grep('X', METACOJO[,c("Chr")], ignore.case = TRUE),c("Chr")] = as.numeric(23)
 message("Saving the SNPs for LocusZoom")
-METALoczoom = METACOJO[,c("Chr","BP","MarkerName", "Allele1", "Allele2","Freq1","Effect","StdErr","P-value","N","Weight","P-value_SE")]
+METALoczoom = METACOJO[,c("Chr","BP","MarkerName", "Allele1", "Allele2","Freq1","Effect","StdErr","P-value_SE","N","Weight","Zscore","P-value")]
 METALoczoom$Chr = as.numeric(METALoczoom$Chr)
 METALoczoom$BP = as.numeric(METALoczoom$BP)
 METALoczoom$`P-value` = as.numeric(METALoczoom$`P-value`)
 METALoczoom = dplyr::arrange(METALoczoom, Chr, BP)
 fwrite(METALoczoom, file = paste0(phenotype,".LocusZoom"), quote = F, sep = "\t", col.names = T, row.name = F )
+METACOJO[grep('23', METACOJO[,c("Chr")], ignore.case = TRUE),c("Chr")] = as.character("X")
+fwrite(METALoczoom, file = paste0(phenotype,".LocusZoom.X"), quote = F, sep = "\t", col.names = T, row.name = F )
+
+# Formatted the filter results for upload into LDSC
+message("Saving the SNPs for LDSC")
+LDSCout = METAresult[,c("MarkerName", "Allele1", "Allele2", "Freq1", "FreqSE","MinFreq","MaxFreq","N", "Weight", "Zscore", "P-value", "Direction")]
+LDSCout[c('Chr', 'BP_ALT_REF')] <- str_split_fixed(LDSCout$MarkerName, ':', 2)
+LDSCout[c('BP', 'ALT_REF')] <- str_split_fixed(LDSCout$BP_ALT_REF, '_', 2)
+LDSCout = LDSCout[,c("Chr","BP","MarkerName", "Allele1", "Allele2","Freq1","FreqSE","MinFreq","MaxFreq","N","Weight","Zscore","P-value", "Direction")]
+LDSCout$BP = as.numeric(LDSCout$BP)
+LDSCout$`P-value` = as.numeric(LDSCout$`P-value`)
+LDSCout = dplyr::arrange(LDSCout, Chr, BP)
+fwrite(LDSCout, file = paste0(phenotype,".LDSCinput"), quote = F, sep = "\t", col.names = T, row.name = F )

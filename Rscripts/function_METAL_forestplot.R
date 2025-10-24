@@ -88,7 +88,7 @@ METAL_forestplot_update <- function(tbl,all,rsid,flag="",package="meta",method="
        c[j] <- -1
        BETA <- BETA * c
        print(cbind(A1,A2,EFFECT_ALLELE,REFERENCE_ALLELE,a1,a2,format(BETA,digits=3),format(BETA*c,digits=3)))
-       if (split) pdf(file=paste0(outpath,p,"-",o,".pdf"), width=12,height=14)
+       if (split) pdf(file=paste0(outpath,p,"-",o,".pdf"), width=12,height=16)
        if (package=="meta")
        {
          meta::settings.meta(method.tau=method)
@@ -99,8 +99,8 @@ METAL_forestplot_update <- function(tbl,all,rsid,flag="",package="meta",method="
          grid::grid.text(TITLE,0.5,0.9)
          with(mg,cat("prot =", p, "MarkerName =", m, "Q =", Q, "df =", df.Q, "p =", pval.Q,
                      "I2 =", I2, "[", lower.I2, ",", upper.I2, "]\n"))
-         message("Saving mata objcet to ", paste0(p,"-",o,".RData"))
-         save(mg, file = paste0(p,"-",o,".RData"))
+         message("Saving mata objcet to ", paste0(outpath,p,"-",o,".RData"))
+         save(mg, file = paste0(outpath,p,"-",o,".RData"))
        } else {
          d <- metafor::escalc(measure="MN",yi=BETA,sei=SE)
          r <- metafor::rma(yi,vi,data=d,method=method,slab=paste0(Study," (",N,")"))

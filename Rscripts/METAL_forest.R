@@ -6,14 +6,14 @@ suppressPackageStartupMessages(library(data.table))
 suppressPackageStartupMessages(library(stringr))
 suppressPackageStartupMessages(library(metafor))
 suppressPackageStartupMessages(library(meta))
-# suppressPackageStartupMessages(library(gap))
+suppressPackageStartupMessages(library(gap))
 suppressPackageStartupMessages(library(dplyr))
 options(bitmapType = "cairo")
 
 #################################functions####################################
 source ("/lustre/home/sww208/GoDMC/GeneticAssociationAnalysis/Rscripts/function_METAL_forestplot.R")
 
-#################################main code####################################
+#################################main code#####p###############################
 arguments <- commandArgs(T)
 setpath <- arguments[1]
 MetaAll <- arguments[2]
@@ -41,18 +41,23 @@ MetaTbl$prot <- phenotype
 
 message("Subset the Rsid file to include only the target SNPs")
 message("Target SNPs: ", targetSNPs)
-SNPrsid = fread(rsid, header = T, data.table=F, stringsAsFactors=F)
+SNPrsid = read.table(file=rsid, header = TRUE, sep=",")
+targetSNPs = str_split(targetSNPs, " ")[[1]]
 SNPrsid = subset(SNPrsid, MarkerName %in% targetSNPs)
-
+print("Input file --- rsid")
+print(SNPrsid)
 # subset the MetaTbl and MetaAll to inlcude only the top SNPs
-Tblinput = subset(MetaTbl, MarkerName %in% SNPrsid$MarkerName)
-Allinput = subset(MetaAll, MarkerName %in% SNPrsid$MarkerName)
+Allinput = subset(MetaAll, MetaAll$MarkerName %in% targetSNPs)
+print("Input file --- all")
+print(head(Allinput))
+Tblinput = subset(MetaTbl, MetaTbl$MarkerName %in% targetSNPs)
+print("Input file --- tbl")
 print(Tblinput)
-# print(Allinput)
-# print(SNPrsid)
+
+
 
 METAL_forestplot_update(Tblinput, Allinput, SNPrsid,
                  digits.TE=2,digits.se=2,
                  col.diamond="green",col.inside="black", col.square="black", 
                  split = TRUE,
-                 package="meta",method="REML",outpath="./plots/")
+                 package="meta",method="REML",outpath="./")
