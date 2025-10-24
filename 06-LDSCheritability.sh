@@ -10,7 +10,7 @@
 #SBATCH --mem=20G
 #SBATCH --ntasks=16
 #SBATCH --time=0-10:00:00
-#SBATCH --array=2-6
+#SBATCH --array=1-7
 
 #####################################################################################################################
 
@@ -22,22 +22,16 @@ source $1 "${SLURM_ARRAY_TASK_ID}"
 timetemp=$(date -u +%Y-%m-%d_%H-%M)
 exec &> >(tee ${LDSCresPath}/logs/logs06LDSCres_log${timetemp}_${phenotype}.log)
 
-echo "Generating the LDSC input files for ${phenotype}..."
-Rscript ${RscriptsPath}/filter_meta.R \
-                        ${METAresPath}/FilteredMeta \
-                        ${METAresPath}/MergedMeta/${phenotype}_merged.tbl.filteredN \
-                        ${phenotype}
-
 
 cd ${LDSCresPath}/LDSC_${phenotype}/ || exit
 
-echo "Manually Reformatting the LDSC input files for ${phenotype}..."
-Rscript ${RscriptsPath}/reformat_LDSCinput.R \
-                            ${LDSCresPath}/LDSC_${phenotype} \
-                            ${METAresPath}/FilteredMeta/${phenotype}.LDSCinput \
-                            ${HomePath}/Resources/common_all_ref_hg37.BED.uni.final \
-                            ${HomePath}/Resources/w_hm3.snplist \
-                            ${phenotype}
+# echo "Manually Reformatting the LDSC input files for ${phenotype}..."
+# Rscript ${RscriptsPath}/reformat_LDSCinput.R \
+#                             ${LDSCresPath}/LDSC_${phenotype} \
+#                             ${METAresPath}/FilteredMeta/${phenotype}.LDSCinput \
+#                             ${HomePath}/Resources/common_all_ref_hg37.BED.uni.final \
+#                             ${HomePath}/Resources/w_hm3.snplist \
+#                             ${phenotype}
 
 module purge
 source "/gpfs/ts0/shared/software/Miniconda3/23.5.2-0/etc/profile.d/conda.sh"
@@ -50,12 +44,14 @@ Rscript ${RscriptsPath}/reformat_MungeSumstats.R \
                             ${phenotype}
 conda deactivate
 
-if [ -f ${phenotype}.mungeinput ] && [ -f ${phenotype}_mungeinputbyR.tsv.gz ]; then
-    echo "LDSC input file for ${phenotype} is generated successfully."
-else
-    echo "LDSC input file for ${phenotype} is not generated. Please check the previous steps."
-    exit 1
-fi
+# output is *_mungeinputbyR.RData and *_mungeinputbyR.tsv.gz
+
+# if [ -f ${phenotype}.mungeinput ] && [ -f ${phenotype}_mungeinputbyR.tsv.gz ]; then
+#     echo "LDSC input file for ${phenotype} is generated successfully."
+# else
+#     echo "LDSC input file for ${phenotype} is not generated. Please check the previous steps."
+#     exit 1
+# fi
 
 echo "Doing the munge_sumstats and h2 estimation for ${phenotype}..."
 module purge
@@ -66,24 +62,24 @@ LDSC="/lustre/home/sww208/Software/ldsc"
 
 cd ${LDSCresPath}/LDSC_${phenotype} || exit
 
-${LDSC}/munge_sumstats.py \
-        --sumstats ${phenotype}.mungeinput \
-        --snp SNP \
-        --N-col N \
-        --a1 Allele1 \
-        --a2 Allele2 \
-        --frq Freq1 \
-        --p P-value \
-        --chunksize 50000 \
-        --signed-sumstats Zscore,0 \
-        --merge-alleles ${HomePath}/Resources/w_hm3.snplist \
-        --out ${phenotype}_manually
+# ${LDSC}/munge_sumstats.py \
+#         --sumstats ${phenotype}.mungeinput \
+#         --snp SNP \
+#         --N-col N \
+#         --a1 Allele1 \
+#         --a2 Allele2 \
+#         --frq Freq1 \
+#         --p P-value \
+#         --chunksize 50000 \
+#         --signed-sumstats Zscore,0 \
+#         --merge-alleles ${HomePath}/Resources/w_hm3.snplist \
+#         --out ${phenotype}_manually
 
-${LDSC}/ldsc.py \
-        --h2 ${phenotype}_manually.sumstats.gz \
-        --ref-ld-chr ${HomePath}/Resources/baselineLD_v2.2/baselineLD. \
-        --w-ld-chr ${HomePath}/Resources/1000G_Phase3_weights_hm3_no_MHC/weights.hm3_noMHC. \
-        --out ${phenotype}_manually_h2
+# ${LDSC}/ldsc.py \
+#         --h2 ${phenotype}_manually.sumstats.gz \
+#         --ref-ld-chr ${HomePath}/Resources/baselineLD_v2.2/baselineLD. \
+#         --w-ld-chr ${HomePath}/Resources/1000G_Phase3_weights_hm3_no_MHC/weights.hm3_noMHC. \
+#         --out ${phenotype}_manually_h2
 
 
 ###
@@ -108,20 +104,20 @@ ${LDSC}/ldsc.py \
 
 # information
 echo " "
-echo "=====================The Estimated Hertibitliy on ${phenotype}===================="
-echo "Using the LDSC input file ${phenotype}.mungeinput"
-echo "How many SNPs used to estimated the hertibility:"
-grep "Writing summary statistics" ${phenotype}_manually.log
-grep "SNPs remain" ${phenotype}_manually_h2.log
-grep "Total Observed scale" ${phenotype}_manually_h2.log
-grep "Lambda GC" ${phenotype}_manually_h2.log
-grep "Mean Chi" ${phenotype}_manually_h2.log
-grep "Intercept" ${phenotype}_manually_h2.log
-grep "Ratio" ${phenotype}_manually_h2.log
-echo "Any Warnings or Errors in the log file:"
-grep -i "error" ${phenotype}_manually_h2.log
-grep -i "warning" ${phenotype}_manually_h2.log
-echo "================================================================================="
+# echo "=====================The Estimated Hertibitliy on ${phenotype}===================="
+# echo "Using the LDSC input file ${phenotype}.mungeinput"
+# echo "How many SNPs used to estimated the hertibility:"
+# grep "Writing summary statistics" ${phenotype}_manually.log
+# grep "SNPs remain" ${phenotype}_manually_h2.log
+# grep "Total Observed scale" ${phenotype}_manually_h2.log
+# grep "Lambda GC" ${phenotype}_manually_h2.log
+# grep "Mean Chi" ${phenotype}_manually_h2.log
+# grep "Intercept" ${phenotype}_manually_h2.log
+# grep "Ratio" ${phenotype}_manually_h2.log
+# echo "Any Warnings or Errors in the log file:"
+# grep -i "error" ${phenotype}_manually_h2.log
+# grep -i "warning" ${phenotype}_manually_h2.log
+# echo "================================================================================="
 
 echo "=====================The Estimated Hertibitliy on ${phenotype}===================="
 echo "Using the LDSC input file ${phenotype}_mungeinputbyR.tsv.gz"

@@ -10,7 +10,7 @@
 #SBATCH --mem=10G
 #SBATCH --ntasks=16
 #SBATCH --time=0-10:00:00
-#SBATCH --array=2-6
+#SBATCH --array=1-6
 
 module purge
 source "/gpfs/ts0/shared/software/Miniconda3/23.5.2-0/etc/profile.d/conda.sh"
@@ -22,13 +22,29 @@ timetemp=$(date -u +%Y-%m-%d_%H-%M)
 exec &> >(tee ${GENECORresPath}/logs/logs08GENECORres_log${timetemp}_${phenotype}.log)
 cd ${GENECORresPath}/GENECOR_${phenotype} || exit 1
 
-TraitPath="/lustre/home/sww208/GoDMC/GADatasets/OtherGWASstats"
 
 epiAge="${LDSCresPath}/LDSC_${phenotype}/${phenotype}_byR.sumstats.gz"
 
-for ID in CRP_2022 INT_2017 NEA_2021 CEA_2021;
+# TraitPath="/lustre/home/sww208/GoDMC/GADatasets/OtherGWASstats"
+# echo "Running the traits under the path of $TraitPath------------------------------"
+# for ID in CRP_2022 INT_2017 NEA_2021 CEA_2021;
+# do
+#     trait="${TraitPath}/$ID/$ID.sumstats.gz"
+#     outFile="${phenotype}_vs_${ID}"
+
+#     ${LDSC}/ldsc.py \
+#         --rg ${epiAge},${trait} \
+#         --ref-ld-chr ${HomePath}/Resources/baselineLD_v2.2/baselineLD. \
+#         --w-ld-chr ${HomePath}/Resources/1000G_Phase3_weights_hm3_no_MHC/weights.hm3_noMHC. \
+#         --out ${outFile}
+# done
+
+
+TraitPath="/lustre/home/sww208/GoDMC/GADatasets/GWASstatsFiltered"
+echo "Running the traits under the path of $TraitPath------------------------------"
+for ID in AD_2021 BMI_2018 FG_2021 FI_2021 G2H_2021 HBAC1_2021 HEIGHTb_2022 HEIGHTc_2022 MD_2025 SCZ_2022 BP_2024;
 do
-    trait="${TraitPath}/$ID/$ID.sumstats.gz"
+    trait="${TraitPath}/$ID.sumstats.gz"
     outFile="${phenotype}_vs_${ID}"
 
     ${LDSC}/ldsc.py \
@@ -41,7 +57,7 @@ done
 # information
 echo " "
 echo "=========The Estimated Genetic Correlation between ${phenotype} and below traits======="
-for ID in CRP_2022 INT_2017 NEA_2021 CEA_2021;
+for ID in CRP_2022 INT_2017 NEA_2021 CEA_2021 AD_2021 BMI_2018 FG_2021 FI_2021 G2H_2021 HBAC1_2021 HEIGHTb_2022 HEIGHTc_2022 MD_2025 SCZ_2022 BP_2024;
 do
     outFile="${phenotype}_vs_${ID}"
     echo "${phenotype} and ${ID} ----------------------------------------------"
