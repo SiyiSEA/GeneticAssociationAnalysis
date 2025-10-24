@@ -70,9 +70,9 @@ colnames(Effectsize) = c("SNP", "Effect", "StdErr","P")
 Lambda = fread(lambda, header = T, data.table=F, stringsAsFactors=F)
 
 if ( phenotype == "gwas_smoking") {
-  lambdacol = "Lambda_Smoke"
+  lambdacol = "Smoking_lambda"
 } else {
-  lambdacol = paste0("Lambda_", phenotype)
+  lambdacol = paste0(phenotype, "_lambda", )
 }
 
 
@@ -185,7 +185,6 @@ for (OneSigSNP in as.list(strsplit(SigSNPs,split=" "))[[1]]){
   BETAforest = MstatSNP[!duplicated(MstatSNP), ]
   BETAforest = dplyr::arrange(BETAforest, BETA)
   forestfunnalplot(BETAforest, markername, markerP, "BETA", "SE", phenotype)
-
 }
 
 

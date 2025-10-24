@@ -10,7 +10,7 @@
 #SBATCH --mem=40G
 #SBATCH --ntasks=16
 #SBATCH --time=0-20:00:00
-#SBATCH --array=1-6
+#SBATCH --array=4-6
 
 #####################################################################################################################
 
@@ -34,7 +34,7 @@ Rscript ${RscriptsPath}/M_stats.R \
             "${MstatresPath}"/Mstat_"${phenotype}" \
             SignalSNPs.pre \
             effectsize_MstatSignal.pre \
-            ${HomePath}/Resources/cohort_lambda.tsv \
+            ${HomePath}/Resources/FastGWA_lambda.txt \
             ${phenotype} \
             "${tartgetSNPs[@]}"
 
