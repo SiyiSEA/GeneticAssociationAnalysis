@@ -52,6 +52,8 @@ for phenotype in DNAmAgeSD DNAmAgessSD PhenoAgeSD PhenoAgessSD DunedinPACESD Dun
     mkdir -p "${GENECORresPath}/GENECOR_${phenotype}"
 done
 
+#### Check the resource files
+
 #### Download Reference files if needed
 # 2024 version of dbSNP
 # if [ -f ${HomePath}/Resources/GRCh37_latest_dbSNP_all.vcf.gz ]; then
