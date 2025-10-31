@@ -9,6 +9,7 @@
 
 source $1
 #### Set folders
+mkdir -p "${HomePath}/Resources"
 mkdir -p "${METAresPath}"
 mkdir -p "${METAresPath}/logs"
 mkdir -p "${METAresPath}/SampleScheme"
@@ -51,7 +52,6 @@ for phenotype in DNAmAgeSD DNAmAgessSD PhenoAgeSD PhenoAgessSD DunedinPACESD Dun
     mkdir -p "${LDSCresPath}/LDSC_${phenotype}"
     mkdir -p "${GENECORresPath}/GENECOR_${phenotype}"
 done
-
 #### Check the resource files
 
 #### Download Reference files if needed

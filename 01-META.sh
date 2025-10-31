@@ -5,7 +5,7 @@
 #SBATCH --mail-type=END # send email at job completion
 #SBATCH --output=JobReports/01META-%j-%a.out
 #SBATCH --error=JobReports/01META-%j-%a.err
-#SBATCH --job-name=01META
+#SBATCH --job-name=01MediMETA
 #SBATCH --nodes=1
 #SBATCH --mem=40G
 #SBATCH --ntasks=16
