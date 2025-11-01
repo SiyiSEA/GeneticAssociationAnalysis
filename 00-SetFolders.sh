@@ -20,7 +20,8 @@ mkdir -p "${METAresPath}/FilteredMeta"
 mkdir -p "${METAresPath}/FilteredMeta/plots"
 
 mkdir -p "${MetalPath}"
-cp ${ScriptsPath}/METALscripts/* ${MetalPath}
+
+
 
 mkdir -p "${COJOresPath}"
 mkdir -p "${COJOresPath}/logs"
@@ -52,6 +53,22 @@ for phenotype in DNAmAgeSD DNAmAgessSD PhenoAgeSD PhenoAgessSD DunedinPACESD Dun
     mkdir -p "${LDSCresPath}/LDSC_${phenotype}"
     mkdir -p "${GENECORresPath}/GENECOR_${phenotype}"
 done
+
+
+#### Prepare METAL scripts
+cp ${ScriptsPath}/METALscripts/* ${MetalPath}
+
+for study in ${AllCohortList[@]}; do
+    echo "" >> ${MetalPath}/DNAmAgeSD_SAMPLE_header.txt
+    echo "PROCESS ${DataPath}/${study}/results/10/DNAmAgeSD.fastGWA" >> ${MetalPath}/DNAmAgeSD_SAMPLE_header.txt
+    echo "" >> ${MetalPath}/DNAmAgeSD_STERR_header.txt
+    echo "PROCESS ${DataPath}/${study}/results/10/DNAmAgeSD.fastGWA" >> ${MetalPath}/DNAmAgeSD_STERR_header.txt
+done
+
+cat ${MetalPath}/DNAmAgeSD_SAMPLE_header.txt ${MetalPath}/DNAmAgeSD_SAMPLE_tail.txt > ${MetalPath}/DNAmAgeSD_SAMPLE.txt
+cat ${MetalPath}/DNAmAgeSD_STERR_header.txt ${MetalPath}/DNAmAgeSD_STERR_tail.txt > ${MetalPath}/DNAmAgeSD_STERR.txt
+
+
 #### Check the resource files
 
 #### Download Reference files if needed

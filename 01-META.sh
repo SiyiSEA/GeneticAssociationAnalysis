@@ -25,14 +25,6 @@ cd ${HomePath} || exit
 timetemp=$(date -u +%Y-%m-%d_%H-%M)
 exec &> >(tee ${METAresPath}/logs/01META-log${timetemp}_${phenotype}.log)
 
-#### Prepare METAL scripts
-for study in ${AllCohortList[@]}; do
-    echo "PROCESS ${DataPath}/${study}/results/10/DNAmAgeSD.fastGWA" >> ${MetalPath}/DNAmAgeSD_SAMPLE_header.txt
-    echo "PROCESS ${DataPath}/${study}/results/10/DNAmAgeSD.fastGWA" >> ${MetalPath}/DNAmAgeSD_STERR_header.txt
-done
-
-cat ${MetalPath}/DNAmAgeSD_SAMPLE_header.txt ${MetalPath}/DNAmAgeSD_SAMPLE_tail.txt > ${MetalPath}/DNAmAgeSD_SAMPLE.txt
-cat ${MetalPath}/DNAmAgeSD_STERR_header.txt ${MetalPath}/DNAmAgeSD_STERR_tail.txt > ${MetalPath}/DNAmAgeSD_STERR.txt
 
 #### check the DNAmAgeSD.txt file
 if [ ! -f ${MetalPath}/DNAmAgeSD_SAMPLE.txt ]; then
