@@ -3,14 +3,14 @@
 #SBATCH -p mrcq # submit to the serial queue
 #SBATCH -A Research_Project-MRC190311 # research project to submit under.
 #SBATCH --mail-type=END # send email at job completion
-#SBATCH --output=JobReports/02QCMETA-matched-%a.out
-#SBATCH --error=JobReports/02QCMETA-matched-%a.err
+#SBATCH --output=JobReports/02AllQCMETA-%a.out
+#SBATCH --error=JobReports/02QAllCMETA-%a.err
 #SBATCH --job-name=02QCMETA
 #SBATCH --nodes=1
 #SBATCH --mem=40G
 #SBATCH --ntasks=16
 #SBATCH --time=0-20:00:00
-#SBATCH --array=8
+#SBATCH --array=1-7
 
 ####################################################################################################################
 # This script is for quality control of meta-analysis results on all the GWAS results collected from the GoDMC II.
@@ -57,9 +57,10 @@ Merge_SSSE_META() {
 
 #### Filter function
 Filter_forN() {
-    echo "Filtering ${1}_merged.tbl file for N > mean(N)..."
+    echo "Filtering ${1}_merged.tbl file for N > Q1(N)..."
 
     mergedTBL=${1}_merged.tbl
+    weight=${2}
 
     cd ${METAresPath} || exit
     # Calculate the mean, min, and max of the N column (10th column)
@@ -76,12 +77,23 @@ Filter_forN() {
     print "Mean:", mean
     }' ./MergedMeta/${mergedTBL}
 
-    # Input the mean value based on the output
-    # echo "Please input the mean value from the above output:"
-    # read -p 'Mean is ' mean
+    # Calculate the first quartile (Q1) of the N column (10th column)
+    Q1=$(awk 'NR>1 {print $10}' ./MergedMeta/${mergedTBL} | sort -n | awk '{
+        a[NR]=$1
+        }
+        END {
+        if (NR==0) {print "No data"; exit}
+        i=(NR+1)*0.25
+        if (i==int(i)) {
+            print (a[i] + a[i+1]) / 2
+        } else {
+            print a[int(i+1)]
+        }
+        }')
+
     
-    # Filter the merged table based on the mean value
-    awk -F' ' -v m=21000 'NR==1 || $10 >= m' ./MergedMeta/${mergedTBL} > ./MergedMeta/${mergedTBL}.filteredN.temp
+    # Filter the merged table based on the Q1 value
+    awk -v q1="$Q1" 'NR==1 || $10 >= q1' ./MergedMeta/${mergedTBL} > ./MergedMeta/${mergedTBL}.filteredN.temp
     awk -F' ' '{print $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20}' ./MergedMeta/${mergedTBL}.filteredN.temp > ./MergedMeta/${mergedTBL}.filteredN
     rm ./MergedMeta/${mergedTBL}.filteredN.temp
 
@@ -93,7 +105,7 @@ if [ ${SLURM_ARRAY_TASK_ID} -lt 8 ]; then
 
     #### Merge and filter meta-analysis
     Merge_SSSE_META ${phenotype}
-    Filter_forN ${phenotype}
+    Filter_forN ${phenotype} ${SampleWeight}
 
     #### Filter the merged table based on the freSE, HetQ, HetI and HetP values
     echo "Filtering ${phenotype}_merged.tbl.filteredN file for freSE, HetQ, HetI and HetP values..."
