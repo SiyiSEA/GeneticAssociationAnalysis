@@ -138,3 +138,11 @@ LDSCout$BP = as.numeric(LDSCout$BP)
 LDSCout$`P-value` = as.numeric(LDSCout$`P-value`)
 LDSCout = dplyr::arrange(LDSCout, Chr, BP)
 fwrite(LDSCout, file = paste0(phenotype,".LDSCinput"), quote = F, sep = "\t", col.names = T, row.name = F )
+
+# Print out the markername with smallest p-value
+message("Finding the SNP with smallest p-value after filtering")
+smallestPSS = METACOJO[which.min(METACOJO$`P-value`), c("MarkerName", "P-value")]
+message(paste0("The SNP with smallest p-value (SS) after filtering is: ",smallestPSS$MarkerName, " with p-value: ", smallestPSS$`P-value`))
+
+smallestPSE = METACOJO[which.min(METACOJO$`P-value`), c("MarkerName", "P-value_SE")]
+message(paste0("The SNP with smallest p-value (SE) after filtering is: ",smallestPSE$MarkerName, " with p-value: ", smallestPSE$`P-value`))

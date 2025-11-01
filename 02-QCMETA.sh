@@ -3,14 +3,14 @@
 #SBATCH -p mrcq # submit to the serial queue
 #SBATCH -A Research_Project-MRC190311 # research project to submit under.
 #SBATCH --mail-type=END # send email at job completion
-#SBATCH --output=JobReports/02AllQCMETA-%a.out
-#SBATCH --error=JobReports/02QAllCMETA-%a.err
-#SBATCH --job-name=02QCMETA
+#SBATCH --output=JobReports/02mediQCMETA-%a.out
+#SBATCH --error=JobReports/02QmediCMETA-%a.err
+#SBATCH --job-name=02QCALLMETA
 #SBATCH --nodes=1
 #SBATCH --mem=40G
 #SBATCH --ntasks=16
 #SBATCH --time=0-20:00:00
-#SBATCH --array=1-7
+#SBATCH --array=8
 
 ####################################################################################################################
 # This script is for quality control of meta-analysis results on all the GWAS results collected from the GoDMC II.
@@ -152,6 +152,8 @@ if [ ${SLURM_ARRAY_TASK_ID} -lt 8 ]; then
     wc -l ${METAresPath}/MergedMeta/${phenotype}_merged.tbl
     echo "The total number of the SNPs in the filterN meta-analysis of ${phenotype} is "
     wc -l ${METAresPath}/MergedMeta/${phenotype}_merged.tbl.filteredN
+    echo "The total number of the SNPs in the COJO meta-analysis of ${phenotype} is "
+    wc -l ${METAresPath}/MergedMeta/${phenotype}_input.cojo
     echo "The total number of the SNPs in to plot for ${phenotype} is "
     wc -l ${METAresPath}/FilteredMeta/${phenotype}.LocusZoom
     echo "============================================================================"
