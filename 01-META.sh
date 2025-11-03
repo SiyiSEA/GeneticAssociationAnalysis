@@ -10,7 +10,7 @@
 #SBATCH --mem=40G
 #SBATCH --ntasks=16
 #SBATCH --time=0-20:00:00
-#SBATCH --array=1-7
+#SBATCH --array=2
 
 #####################################################################################################################
 # This script is for mate-analysis on all the GWAS results collected from the GoDMC II.

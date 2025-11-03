@@ -6,56 +6,44 @@ SLURM_ARRAY_TASK_ID=$1
 if [ "${SLURM_ARRAY_TASK_ID}" == 1 ]; then
     phenotype="DNAmAgeSD"
     fastGWA="results/10/DNAmAgeSD.fastGWA"
-    tartgetSNPs=("6:18104322_A_G" "6:18130918_C_T" "6:18120400_C_T" "6:18118898_C_T")
-    metaRData="DNAmAgeSD-Chr6_18130918.RData"
     echo "==================Running for DNAmAgeSD=================="
 
 elif [ "${SLURM_ARRAY_TASK_ID}" == 2 ]; then
     phenotype="DNAmAgessSD"
     fastGWA="results/10/DNAmAgessSD.fastGWA"
-    tartgetSNPs=("6:18104322_A_G" "6:18130918_C_T" "6:18120400_C_T" "6:18118898_C_T")
-    metaRData="DNAmAgessSD-Chr6_18130918.RData"
     echo "==================Running for DNAmAgessSD=================="
 
 elif [ "${SLURM_ARRAY_TASK_ID}" == 3 ]; then
     phenotype="PhenoAgeSD"
     fastGWA="results/10/PhenoAgeSD.fastGWA"
-    tartgetSNPs=("6:18130918_C_T" "6:18109815_C_G" "6:18121029_A_T")
-    metaRData="PhenoAgeSD-Chr6_18109815.RData"
     echo "==================Running for PhenoAgeSD=================="
 
 elif [ "${SLURM_ARRAY_TASK_ID}" == 4 ]; then
     phenotype="PhenoAgessSD"
     fastGWA="results/10/PhenoAgessSD.fastGWA"
-    tartgetSNPs=("6:18130918_C_T" "6:18109815_C_G" "6:18121029_A_T")
-    metaRData="PhenoAgessSD-Chr6_18109815.RData"
     echo "==================Running for PhenoAgessSD=================="
 
 elif [ "${SLURM_ARRAY_TASK_ID}" == 5 ]; then
     phenotype="DunedinPACESD"
     fastGWA="results/10/DunedinPACESD.fastGWA"
-    tartgetSNPs=("14:74141429_A_G" "14:74176679_C_T" "12:131526322_A_G")
-    metaRData="DunedinPACESD-Chr14_74176679.RData"
     echo "==================Running for DunedinPACESD=================="
 
 elif [ "${SLURM_ARRAY_TASK_ID}" == 6 ]; then
     phenotype="DunedinPACEssSD"
     fastGWA="results/10/DunedinPACEssSD.fastGWA"
-    tartgetSNPs=("14:74141429_A_G" "14:74176679_C_T" "12:131525310_C_T")
-    metaRData="DunedinPACEssSD-Chr14_74176679.RData"
     echo "==================Running for DunedinPACEssSD=================="
 
 elif [ "${SLURM_ARRAY_TASK_ID}" == 7 ]; then
     phenotype="gwas_smoking"
     fastGWA="results/11/gwas_smoking.fastGWA"
-    tartgetSNPs=("3:128321226_A_G" "3:22585598_C_T")
-    metaRData="gwas_smoking-Chr3_22585598.RData"
     echo "==================Running for gwas_smoking=================="
 fi
 
 
 #### Paths
 HomePath="/lustre/home/sww208/GoDMC/GeneticAssociationAnalysis"
+DataPath="/lustre/home/sww208/GoDMC/GADatasets/StatsAgeSmoke2025/AgeSmokeData"
+SampleWeight="21000"
 echo "HomePath is set to ${HomePath}"
 echo "Please setting the HomePath variable in the config file if it is not correct."
 ScriptsPath="/lustre/home/sww208/GoDMC/GeneticAssociationAnalysis"

@@ -17,12 +17,19 @@ source ("/lustre/home/sww208/GoDMC/GeneticAssociationAnalysis/Rscripts/function_
 #################################main code####################################
 arguments <- commandArgs(T)
 setpath <- arguments[1]
-metaobject <- arguments[2]
+targetSNPs <- arguments[2]
+phenotype <- arguments[3]
 
 setwd(setpath)
 message("Reading in the files")
-load(metaobject)
-print(metaobject)
+load(file = targetSNPs)
+message("The significant SNPs to be analyzed for heterogeneity is: ", SigSNPvector[1])
+chr = str_split_fixed(SigSNPvector[1],":",2)[1]
+bp = str_split_fixed(str_split_fixed(SigSNPvector[1],"_",2)[1],":",2)[2]
+
+metaobject= paste0("./plots/",phenotype,"-Chr",chr,"_",bp,".RData")
+load(file=metaobject)
+
 Outname = tools::file_path_sans_ext(metaobject)
 sink(paste0(Outname, "_hemo_heter.record"))
 
@@ -32,19 +39,19 @@ print(find.outliers(mg))
 # Outliers and Influence Cases
 metaoutput_inf = InfluenceAnalysis_update(mg, random = TRUE, return.separate.plots = TRUE)
 message("Plotting baujat plot for SNP ", Outname, " ----------------------------")
-pdf(file = paste0("./plots/",Outname,"_baujat.pdf"),width=5, height=5)
+pdf(file = paste0(Outname,"_baujat.pdf"),width=5, height=5)
 plot(metaoutput_inf, "baujat")
 dev.off()
 message("Plotting influence plot for ", Outname, " ----------------------------")
-pdf(file = paste0("./plots/",Outname,"_influence.pdf"), width = 15, height = 10)
+pdf(file = paste0(Outname,"_influence.pdf"), width = 15, height = 10)
 plot(metaoutput_inf, "influence")
 dev.off()
 message("Plotting forestplot_es.pdf plot for ", Outname, " ----------------------------")
-png(file = paste0("./plots/",Outname,"_forestplot_es.png"), width = 600, height = 600)
+png(file = paste0(Outname,"_forestplot_es.png"), width = 600, height = 600)
 plot(metaoutput_inf, "es")
 dev.off()
 message("Plotting forestplot_i2.pdf plot for ", Outname, " ----------------------------")
-png(file = paste0("./plots/",Outname,"_forestplot_i2.png"), width = 600, height = 600)
+png(file = paste0(Outname,"_forestplot_i2.png"), width = 600, height = 600)
 plot(metaoutput_inf, "i2")
 dev.off()
 

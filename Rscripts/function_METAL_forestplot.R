@@ -56,14 +56,14 @@ METAL_forestplot_update <- function(tbl,all,rsid,flag="",package="meta",method="
   requireNamespace("metafor")
   dplyr_rsid <- function(df,rsid)
   {
-    d <- dplyr::left_join(df,rsid)
+    d <- left_join(df,rsid,by="MarkerName")
     m <- within(d, {
       isna <- is.na(rsid)
       rsid[isna] <- MarkerName[isna]
     })
   }
-  t <- dplyr_rsid(tbl,rsid)
-  a <- dplyr_rsid(all,rsid)
+  t <- dplyr_rsid(df=tbl,rsid)
+  # a <- dplyr_rsid(df=all,rsid)
   for(i in 1:nrow(tbl))
   {
      p <- tbl[i,"prot"]

@@ -41,7 +41,7 @@ for chr in {1..22}; do
 
         if [ "$nSignals" -lt 2 ];
         then
-            echo "will skip the Step 1 (plotting) as there are only one signal"
+            echo "will skip the Step 1 (plotting) as there are only one siganl"
             echo "will skip the Step 2 (condition analysis) as there are only one signal"
             echo "Step 3: Formatting the cojo output for LocusZoom"
             Rscript ${RscriptsPath}/format_cojo.R \

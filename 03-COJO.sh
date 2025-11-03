@@ -10,7 +10,7 @@
 #SBATCH --mem=40G
 #SBATCH --ntasks=16
 #SBATCH --time=0-20:00:00
-#SBATCH --array=1-6
+#SBATCH --array=1-7
 
 #####################################################################################################################
 
@@ -84,6 +84,15 @@ cat *${phenotype}_temp.fastGWA >> "${MstatresPath}"/Mstat_"${phenotype}"/SignalS
 mv "${phenotype}"_chorts.fastGWA_N "${MstatresPath}"/Mstat_"${phenotype}"/"${phenotype}"_chorts.fastGWA_N
 rm *${phenotype}_temp*.fastGWA
 rm temp.fastGWA
+
+echo "Convert the SNP list into rsid for the forest plot and further analysis."
+module purge
+source "/gpfs/ts0/shared/software/Miniconda3/23.5.2-0/etc/profile.d/conda.sh"
+conda activate RGreatSquareRoot
+Rscript ${RscriptsPath}/SNP_convert_rsid.R \
+            "${COJOresPath}"/Cojo_"${phenotype}" \
+            SignalCojoSNPlist.txt \
+            SignalCojoSNPlist.txt.rsid
 
 echo "Checking if the SignalSNPs.pre file is created successfully..."
 num_lines=$(wc -l < "${MstatresPath}"/Mstat_"${phenotype}"/SignalSNPs.pre)

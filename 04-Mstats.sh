@@ -10,7 +10,7 @@
 #SBATCH --mem=40G
 #SBATCH --ntasks=16
 #SBATCH --time=0-20:00:00
-#SBATCH --array=4-6
+#SBATCH --array=2-7
 
 #####################################################################################################################
 
@@ -35,8 +35,8 @@ Rscript ${RscriptsPath}/M_stats.R \
             SignalSNPs.pre \
             effectsize_MstatSignal.pre \
             ${HomePath}/Resources/FastGWA_lambda.txt \
-            ${phenotype} \
-            "${tartgetSNPs[@]}"
+            ${phenotype} #\
+            #"${tartgetSNPs[@]}"
 
 
 
@@ -51,23 +51,21 @@ Rscript ${RscriptsPath}/METAL_forest.R \
             "${MstatresPath}"/Mstat_"${phenotype}" \
             SignalSNPs.pre \
             "${phenotype}".forestSignal.tbl.pre \
-            ${HomePath}/Resources/rsid.txt \
+            "${COJOresPath}"/Cojo_"${phenotype}"/SignalCojoSNPlist.txt.rsid \
             ${phenotype} \
-            "${tartgetSNPs[@]}" 
+            ${phenotype}_SignificantSNPs.RData
 
 ##### Heterogeneity Analysis
 echo "Running the Heterogeneity Analysis with Signal SNPs for ${phenotype}..."
-Rscript ${RscriptsPath}/plot_heter.R \
-            "${MstatresPath}"/Mstat_"${phenotype}" \
-            "$metaRData"
+# Rscript ${RscriptsPath}/plot_heter.R \
+#             "${MstatresPath}"/Mstat_"${phenotype}" \
+#              ${phenotype}_SignificantSNPs.RData \
+#              ${phenotype}
 
 # information
 echo " "
 echo "=====================The direction of topSNPs of ${phenotype}===================="
-echo "MarkerName Effect P-value Direction"
-for t in "${tartgetSNPs[@]}"; do
-    grep "$t" "${phenotype}".forestSignal.tbl.pre | awk '{print $1, $10, $12, $9}'
-done
+echo "Please check the forest plots for each significant SNP in the ${MstatresPath}/Mstat_${phenotype}/plots/ directory."
 echo "The corresponding study of the direction is:"
 grep "Input File" ${METAresPath}/SampleScheme/${phenotype}_SS1.tbl.info | cut -d':' -f2- | sed 's/^ *//' | awk -F'/' '{print $(NF-3)}'
 echo "================================================================================="

@@ -20,11 +20,12 @@ MetaAll <- arguments[2]
 MetaTbl <- arguments[3]
 rsid <- arguments[4]
 phenotype <- arguments[5]
-targetSNPs <- arguments[6:length(arguments)]
+targetSNPs <- arguments[6]
 
 
 setwd(setpath)
 message("Reading in the files")
+load(file = targetSNPs)  # load the Significant SNPs RData file
 MetaAll = fread(MetaAll, header = T, data.table=F, stringsAsFactors=F)
 colnames(MetaAll)[which(colnames(MetaAll) == "SNP")] <- "MarkerName"
 colnames(MetaAll)[which(colnames(MetaAll) == "A1")] <- "EFFECT_ALLELE"
@@ -40,17 +41,16 @@ MetaTbl$SNPout <- paste0("Chr",MetaTbl$Chromosome, "_", MetaTbl$Position)
 MetaTbl$prot <- phenotype
 
 message("Subset the Rsid file to include only the target SNPs")
-message("Target SNPs: ", targetSNPs)
-SNPrsid = read.table(file=rsid, header = TRUE, sep=",")
-targetSNPs = str_split(targetSNPs, " ")[[1]]
-SNPrsid = subset(SNPrsid, MarkerName %in% targetSNPs)
+message("Target SNPs: ", SigSNPvector)
+SNPrsid = read.table(file=rsid, header = TRUE, sep="\t")
+SNPrsid = subset(SNPrsid, MarkerName %in% SigSNPvector)
 print("Input file --- rsid")
 print(SNPrsid)
 # subset the MetaTbl and MetaAll to inlcude only the top SNPs
-Allinput = subset(MetaAll, MetaAll$MarkerName %in% targetSNPs)
+Allinput = as.data.frame(subset(MetaAll, MetaAll$MarkerName %in% SigSNPvector))
 print("Input file --- all")
 print(head(Allinput))
-Tblinput = subset(MetaTbl, MetaTbl$MarkerName %in% targetSNPs)
+Tblinput = as.data.frame(subset(MetaTbl, MetaTbl$MarkerName %in% SigSNPvector))
 print("Input file --- tbl")
 print(Tblinput)
 
@@ -60,4 +60,4 @@ METAL_forestplot_update(Tblinput, Allinput, SNPrsid,
                  digits.TE=2,digits.se=2,
                  col.diamond="green",col.inside="black", col.square="black", 
                  split = TRUE,
-                 package="meta",method="REML",outpath="./")
+                 package="meta",method="REML",outpath="./plots/")

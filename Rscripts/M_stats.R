@@ -1,6 +1,5 @@
 ###############################description###################################
 
-
 #################################packages####################################
 suppressPackageStartupMessages(library(data.table))
 suppressPackageStartupMessages(library(ggplot2))
@@ -60,7 +59,6 @@ Mstat <- arguments[2]
 effectsize <- arguments[3]
 lambda <- arguments[4]
 phenotype <- arguments[5]
-SigSNPs <- arguments[6:length(arguments)]
 
 setwd(setpath)
 message("Reading in the files for Mstat")
@@ -72,7 +70,7 @@ Lambda = fread(lambda, header = T, data.table=F, stringsAsFactors=F)
 if ( phenotype == "gwas_smoking") {
   lambdacol = "Smoking_lambda"
 } else {
-  lambdacol = paste0(phenotype, "_lambda", )
+  lambdacol = paste0(phenotype, "_lambda")
 }
 
 
@@ -121,7 +119,7 @@ print(getmstatistic_results$M_crit_alpha_0_05)
 
 print(paste("Saving M statistic results for ", phenotype))
 save(getmstatistic_results, file = paste0(phenotype,"_MstatResults.RData"))
-# load(paste0(phenotype,"_MstatResults.RData"))
+#load(paste0(phenotype,"_MstatResults.RData"))
 
 #### plot-1
 dframe = getmstatistic_results$M_dataset
@@ -172,12 +170,23 @@ message(paste0("./plots/",phenotype,"_cohortMstats.pdf has been generated succes
 ### plot-3+4 M forest plot + beta/effect size forest plot
 getm <- dplyr::arrange(getmstatistic_results$M_dataset, M)
 
-for (OneSigSNP in as.list(strsplit(SigSNPs,split=" "))[[1]]){
+Effectsize_sorted = Effectsize[order(Effectsize$P), ]
+SigSNP_list = as.character(Effectsize_sorted$SNP[1:5])
+message("Top 5 Significant SNPs are: ")
+print(SigSNP_list)
+
+SigSNPvector = c()
+for (OneSigSNP in SigSNP_list){
   print(paste0("Making M forest plot for ", OneSigSNP))
   markername = as.character(OneSigSNP)
   markerP = Effectsize[Effectsize$SNP == markername,"P"]
   MstatSNP = MstatTable[MstatTable$SNP == markername,]
   getmSNP = subset(getm, getm$variant_names_in == markername)
+  if (nrow(MstatSNP) == 0 | nrow(getmSNP) == 0){
+        message("Warning:No data for ", markername, ", skipping...")
+        next
+  }
+  SigSNPvector = c(SigSNPvector, markername)
   Mforest = merge(MstatSNP[, c("Study", "N")],getmSNP,by.x="Study", by.y="study_names_in")
   Mforest = Mforest[!duplicated(Mforest), ]
   Mforest = dplyr::arrange(Mforest, M)
@@ -186,6 +195,6 @@ for (OneSigSNP in as.list(strsplit(SigSNPs,split=" "))[[1]]){
   BETAforest = dplyr::arrange(BETAforest, BETA)
   forestfunnalplot(BETAforest, markername, markerP, "BETA", "SE", phenotype)
 }
-
+save(SigSNPvector, file = paste0(phenotype,"_SignificantSNPs.RData"))
 
 
