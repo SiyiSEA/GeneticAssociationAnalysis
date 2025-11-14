@@ -10,6 +10,7 @@
 #SBATCH --mem=10G
 #SBATCH --ntasks=16
 #SBATCH --time=0-10:00:00
+#SBATCH --array=8
 
 module purge
 
@@ -25,12 +26,12 @@ if [ ${SLURM_ARRAY_TASK_ID} == 8 ]; then
     echo "Phenotype SNPHeritability SE" > HerOverall.txt
     for phenotype in DNAmAgeSD DNAmAgessSD PhenoAgeSD PhenoAgessSD DunedinPACESD DunedinPACEssSD gwas_smoking
     do
-        her=$(tail ${LDSCresPath}/logs/logs06LDSCres_log2025-09-15_10-17_${phenotype}.log | grep "h2" | awk '{print $5}')
-        se=$(tail ${LDSCresPath}/logs/logs06LDSCres_log2025-09-15_10-17_${phenotype}.log | grep "h2" | awk '{print $6}' | sed 's/[()]//g')
+        her=$(tail ${LDSCresPath}/logs/logs06LDSCres_*_${phenotype}.log | grep "h2" | awk '{print $5}')
+        se=$(tail ${LDSCresPath}/logs/logs06LDSCres_*_${phenotype}.log | grep "h2" | awk '{print $6}' | sed 's/[()]//g')
         echo "$phenotype $her $se" >> HerOverall.txt
     done
 
-    Rscript ${RscriptsPath}/plot_heter.R \
+    Rscript ${RscriptsPath}/plot_SNPher.R \
                         ${GENECORresPath}/plots
                         ${GENECORresPath}/plots/HerOverall.txt \
                         "All"
