@@ -15,15 +15,15 @@
 
 #####################################################################################################################
 
+source $1
 timetemp=$(date -u +%Y-%m-%d_%H-%M)
-exec &> >(tee ${LDSCresPath}/logs/logs07LDSCres_log${timetemp}_${phenotype}.log)
+exec &> >(tee ${LDSCresPath}/logs/logs06aLDSCres_log${timetemp}.log)
 
 module purge
 source "/gpfs/ts0/shared/software/Miniconda3/23.5.2-0/etc/profile.d/conda.sh"
 conda activate ldsc
 LDSC="/lustre/home/sww208/Software/ldsc"
 
-source $1
 
 cd ${LDSCresPath} || exit 1
 
