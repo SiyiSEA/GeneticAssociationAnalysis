@@ -16,8 +16,7 @@
 #####################################################################################################################
 
 source $1
-timetemp=$(date -u +%Y-%m-%d_%H-%M)
-exec &> >(tee ${LDSCresPath}/logs/logs06aLDSCres_log${timetemp}.log)
+exec &> >(tee ${LDSCresPath}/logs/logs06aLDSCres.log)
 
 module purge
 source "/gpfs/ts0/shared/software/Miniconda3/23.5.2-0/etc/profile.d/conda.sh"
@@ -98,7 +97,7 @@ done
 
 # information
 echo " "
-# echo "=========The Estimated Genetic Correlation across all the phenotypes======="
+echo "=========The Estimated Genetic Correlation across all the phenotypes======="
 # echo "Session one made by hand========================================================"
 # for ((i=0; i<${#phenos[@]}-1; i++)); do
 #       for ((j=i+1; j<${#phenos[@]}; j++)); do
@@ -110,7 +109,7 @@ echo " "
 #           echo ""
 #       done
 # done
-echo "Session two made by MSS========================================================"
+# echo "Session two made by MSS========================================================"
 for ((i=0; i<${#phenos[@]}-1; i++)); do
       for ((j=i+1; j<${#phenos[@]}; j++)); do
           echo "${phenos[i]} and ${phenos[j]}------------------------------------"
